@@ -1,4 +1,4 @@
-// const functions = require('firebase-functions');
+const functions = require('firebase-functions');
 const dotenv = require('dotenv');
 dotenv.config();
 const cors = require('cors');
@@ -40,18 +40,18 @@ app.post('/xxuigjye', async (req, res) => {
       </ul>
     `;
 
-    // let transporter = nodemailer.createTransport({
-    //   host: process.env.MAIL_HOST,
-    //   port: process.env.MAIL_PORT,
-    //   secure: true, // true for 465, false for other ports
-    //   auth: {
-    //     user: process.env.MAIL_USERNAME, // generated ethereal user
-    //     pass: process.env.MAIL_PASSWORD, // generated ethereal password
-    //   },
-    //   tls: {
-    //     rejectUnauthorized: false,
-    //   },
-    // });
+    let transporter = nodemailer.createTransport({
+      host: process.env.MAIL_HOST,
+      port: process.env.MAIL_PORT,
+      secure: true, // true for 465, false for other ports
+      auth: {
+        user: process.env.MAIL_USERNAME, // generated ethereal user
+        pass: process.env.MAIL_PASSWORD, // generated ethereal password
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
 
     const session = await stripe.checkout.sessions.create({
       customer: customer.id,
@@ -77,18 +77,18 @@ app.post('/xxuigjye', async (req, res) => {
       cancel_url: process.env.FRONTEND_URL,
     });
 
-    // let info = await transporter.sendMail(
-    //   {
-    //     from: '"Payment Confirmation" <paymentconfirm@aumkeshavsharma.com>',
-    //     to: 'payment@aumkeshavsharma.com',
-    //     subject: 'A payment was made on our website',
-    //     text: 'Hello woIrld?',
-    //     html: output,
-    //   },
-    //   () => {}
-    // );
-    // console.log('Message sent: %s', info.messageId);
-    // console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+    let info = await transporter.sendMail(
+      {
+        from: '"Payment Confirmation" <paymentconfirm@aumkeshavsharma.com>',
+        to: 'payment@aumkeshavsharma.com',
+        subject: 'A payment was made on our website',
+        text: 'Hello woIrld?',
+        html: output,
+      },
+      () => {}
+    );
+    console.log('Message sent: %s', info.messageId);
+    console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
 
     res.json({ id: session.id, status: 'success' });
   } catch (error) {
@@ -97,7 +97,7 @@ app.post('/xxuigjye', async (req, res) => {
   }
 });
 
-// exports.app = functions.https.onRequest(app);
-app.listen(5000, () => {
-  console.log('Server running');
-});
+exports.app = functions.https.onRequest(app);
+// app.listen(5000, () => {
+//   console.log('Server running');
+// });
